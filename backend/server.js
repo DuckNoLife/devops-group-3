@@ -8,7 +8,7 @@ app.use(helmet());
 app.use(cors());
 app.use(express.json());
 
-// FIX BUG #1: Đổi mật khẩu mặc định để khớp với cấu hình thường dùng trong docker-compose
+// FIX BUG #1: Đổi mật khẩu mặc định để khớp với cấu hình thường dùng trong docker-compose.
 const pool = new Pool({
    user: process.env.DB_USER || 'postgres',
    host: process.env.DB_HOST || 'localhost',
