@@ -10,7 +10,13 @@ app.use(
       crossOriginOpenerPolicy: { policy: "unsafe-none" }
    })
 );
-app.use(cors({ origin: 'https://frontend-latest-ijjx.onrender.com', methods: ['GET', 'POST', 'PUT', 'DELETE'], credentials: true }));
+
+const allowedOrigin = process.env.FRONTEND_URL || 'http://localhost:3000';
+app.use(cors({ 
+   origin: allowedOrigin, 
+   methods: ['GET', 'POST', 'PUT', 'DELETE'], 
+   credentials: true 
+}));
 app.use(express.json());
 
 // FIX BUG #1: Đổi mật khẩu mặc định để khớp với cấu hình thường dùng trong docker-compose.
