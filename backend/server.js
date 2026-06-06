@@ -24,10 +24,10 @@ const pool = new Pool({
    user: process.env.DB_USER || 'postgres',
    host: process.env.DB_HOST || 'localhost',
    database: process.env.DB_NAME || 'tododb',
-   password: process.env.DB_PASSWORD || 'secret_password', // Sửa 'wrongpassword' thành 'postgres'
+   password: process.env.DB_PASSWORD || 'secret_password',
    port: process.env.DB_PORT || 5432,
+   ssl: { rejectUnauthorized: false }
 });
-
 
 const initDB = async () => {
    try {
