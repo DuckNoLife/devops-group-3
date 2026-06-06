@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 
 // STUDENT TODO: This API_URL works for local development
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8080';
-fetch(`${API_URL}/api/todos`);
 
 function App() {
   const [todos, setTodos] = useState([]);
