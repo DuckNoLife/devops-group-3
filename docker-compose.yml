@@ -12,7 +12,7 @@ services:
       - "3000:3000"
     environment:
       # Pass the backend URL to your React app to fetch the correct address when running Docker.
-      - REACT_APP_API_URL=http://localhost:8080
+      - REACT_APP_API_URL=https://backend-latest-g3.onrender.com/
     depends_on:
       - backend
 
