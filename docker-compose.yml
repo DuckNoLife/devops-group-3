@@ -62,5 +62,4 @@ services:
 
 # 4. Define named volumes
 volumes:
-  postgres_data:
-  - postgres_data:/var/lib/postgresql/data
+  postgres_data: null
