@@ -26,7 +26,6 @@ const pool = new Pool({
    database: process.env.DB_NAME || 'tododb',
    password: process.env.DB_PASSWORD || 'secret_password',
    port: process.env.DB_PORT || 5432,
-   ssl: isTestEnv ? false : { rejectUnauthorized: false }
 });
 
 const initDB = async () => {
