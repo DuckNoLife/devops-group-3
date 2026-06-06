@@ -1,60 +1,67 @@
 # ===========================================
 # STUDENT TODO: Complete this Docker Compose file
 # ===========================================
-#
-# Requirements:
-# 1. Frontend service:
-#    - Build from ./frontend directory
-#    - Expose port 3000
-#    - Should depend on backend
-#
-# 2. Backend service:
-#    - Build from ./backend directory
-#    - Expose port 8080
-#    - Must have environment variables for database connection
-#    - Should depend on postgres and wait for it to be healthy
-#    - Add a healthcheck
-#
-# 3. Postgres service:
-#    - Use postgres:15-alpine image
-#    - Set POSTGRES_DB, POSTGRES_USER, POSTGRES_PASSWORD
-#    - Use a named volume for data persistence
-#    - Mount the init script from ./database/database.sql
-#    - Add a healthcheck
-#
-# 4. Define named volumes
-#
-# Hints:
-# - Research: "docker-compose healthcheck"
-# - Research: "docker-compose depends_on condition"
-# - Database env vars: DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD
-#
-# Example healthcheck:
-#   healthcheck:
-#      test: ['CMD-SHELL', 'pg_isready -U postgres']
-#      interval: 10s
-#      timeout: 5s
-#      retries: 5
-# ===========================================
 
 version: '3.8'
 
 services:
-  # STUDENT TODO: Define frontend service
+  # 1. Frontend service
   frontend:
     build: ./frontend
-    # TODO: Add ports, depends_on
+    ports:
+      - "3000:3000"
+    environment:
+      # Truyền URL của backend vào React app để fetch đúng địa chỉ khi chạy Docker
+      - REACT_APP_API_URL=http://localhost:8080
+    depends_on:
+      - backend
 
-  # STUDENT TODO: Define backend service
+  # 2. Backend service
   backend:
     build: ./backend
-    # TODO: Add ports, environment, depends_on, healthcheck
+    ports:
+      - "8080:8080"
+    environment:
+      # Các biến môi trường kết nối Database
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=devops_db
+      - DB_USER=postgres
+      - DB_PASSWORD=secret_password
+    depends_on:
+      postgres:
+        # Bắt buộc đợi Postgres vượt qua bài test healthcheck mới khởi động Backend
+        condition: service_healthy
+    healthcheck:
+      # Kiểm tra xem backend đã sẵn sàng nhận request chưa
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:8080/ || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
-  # STUDENT TODO: Define postgres service
+  # 3. Postgres service
   postgres:
     image: postgres:15-alpine
-    # TODO: Add environment, ports, volumes, healthcheck
+    ports:
+      - "5432:5432"
+    environment:
+      # Khởi tạo thông tin mặc định cho Database
+      - POSTGRES_DB=devops_db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=secret_password
+    volumes:
+      # Lưu trữ dữ liệu cố định (để không mất data khi tắt container)
+      - postgres_data:/var/lib/postgresql/data
+      # Mount script để tự động chạy khi khởi tạo database lần đầu
+      - ./database/database.sql:/docker-entrypoint-initdb.d/database.sql
+    healthcheck:
+      # Dùng pg_isready theo đúng gợi ý của đề bài
+      test: ['CMD-SHELL', 'pg_isready -U postgres']
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
-# STUDENT TODO: Define named volumes
+# 4. Define named volumes
 volumes:
   postgres_data:
+  - postgres_data:/var/lib/postgresql/data
