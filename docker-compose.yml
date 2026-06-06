@@ -11,7 +11,7 @@ services:
     ports:
       - "3000:3000"
     environment:
-      # Truyền URL của backend vào React app để fetch đúng địa chỉ khi chạy Docker
+      # Pass the backend URL to your React app to fetch the correct address when running Docker.
       - REACT_APP_API_URL=http://localhost:8080
     depends_on:
       - backend
@@ -22,7 +22,7 @@ services:
     ports:
       - "8080:8080"
     environment:
-      # Các biến môi trường kết nối Database
+      # Environment variables related to database connection
       - DB_HOST=postgres
       - DB_PORT=5432
       - DB_NAME=devops_db
@@ -30,10 +30,10 @@ services:
       - DB_PASSWORD=secret_password
     depends_on:
       postgres:
-        # Bắt buộc đợi Postgres vượt qua bài test healthcheck mới khởi động Backend
+        # It is mandatory to wait for Postgres to pass the healthcheck before starting the backend.
         condition: service_healthy
     healthcheck:
-      # Kiểm tra xem backend đã sẵn sàng nhận request chưa
+      # Check if the backend is ready to receive requests.
       test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:8080/ || exit 1"]
       interval: 10s
       timeout: 5s
@@ -45,17 +45,16 @@ services:
     ports:
       - "5432:5432"
     environment:
-      # Khởi tạo thông tin mặc định cho Database
+      # Initialize default information for the database.
       - POSTGRES_DB=devops_db
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=secret_password
     volumes:
-      # Lưu trữ dữ liệu cố định (để không mất data khi tắt container)
+      # Store data permanently 
       - postgres_data:/var/lib/postgresql/data
-      # Mount script để tự động chạy khi khởi tạo database lần đầu
+      # Mount the script to automatically run when the database is first initialized.
       - ./database/database.sql:/docker-entrypoint-initdb.d/database.sql
     healthcheck:
-      # Dùng pg_isready theo đúng gợi ý của đề bài
       test: ['CMD-SHELL', 'pg_isready -U postgres']
       interval: 10s
       timeout: 5s
