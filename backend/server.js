@@ -28,6 +28,25 @@ const pool = new Pool({
    port: process.env.DB_PORT || 5432,
 });
 
+
+const initDB = async () => {
+   try {
+      await pool.query(`
+         CREATE TABLE IF NOT EXISTS todos (
+            id SERIAL PRIMARY KEY,
+            title VARCHAR(255) NOT NULL,
+            completed BOOLEAN DEFAULT FALSE
+         );
+      `);
+      console.log("✅ Database initialized: Table 'todos' is ready!");
+   } catch (err) {
+      console.error("❌ Error:", err);
+   }
+};
+
+
+initDB();
+
 app.get('/health', (req, res) => {
    res.json({ status: 'healthy', version: '1.0.0' });
 });
@@ -68,9 +87,8 @@ app.put('/api/todos/:id', async (req, res) => {
       const { id } = req.params;
       const { title, completed } = req.body;
       
-      // Cập nhật linh hoạt: nếu không gửi title/completed thì giữ nguyên giá trị cũ (sử dụng COALESCE)
       const result = await pool.query(
-         'UPDATE todos SET title = COALESCE($1, title), completed = COALESCE($2, completed) WHERE id = $3 RETURNING *',
+'UPDATE todos SET title = COALESCE($1, title), completed = COALESCE($2, completed) WHERE id = $3 RETURNING *',
          [title, completed, id]
       );
 
