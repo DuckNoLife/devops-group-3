@@ -76,7 +76,7 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/frontend:latest
           build-args: |
-            REACT_APP_API_URL=https://devops-group3-backend.onrender.com
+            REACT_APP_API_URL=https://backend-latest-g3.onrender.com
 
   deploy:
     name: Deploy to Render
