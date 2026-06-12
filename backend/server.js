@@ -59,7 +59,7 @@ app.get('/api/todos', async (req, res) => {
    } catch (err) {
       res.status(500).json({ error: err.message });
    }
-});
+// });
 
 // POST todos
 app.post('/api/todos', async (req, res) => {
