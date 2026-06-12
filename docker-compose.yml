@@ -7,7 +7,7 @@ version: '3.8'
 services:
   # 1. Frontend service
   frontend:
-    build: ./frontend
+    image: ducknolife/frontend:latest
     ports:
       - "3000:3000"
     environment:
@@ -18,14 +18,14 @@ services:
 
   # 2. Backend service
   backend:
-    build: ./backend
+    image: ducknolife/backend:latest
     ports:
       - "8080:8080"
     environment:
       # Environment variables related to database connection
       - DB_HOST=postgres
       - DB_PORT=5432
-      - DB_NAME=devops_db
+      - DB_NAME=tododb
       - DB_USER=postgres
       - DB_PASSWORD=secret_password
     depends_on:
@@ -46,7 +46,7 @@ services:
       - "5432:5432"
     environment:
       # Initialize default information for the database.
-      - POSTGRES_DB=devops_db
+      - POSTGRES_DB=tododb
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=secret_password
     volumes:
@@ -62,4 +62,4 @@ services:
 
 # 4. Define named volumes
 volumes:
-  postgres_data: null
+  postgres_data:
